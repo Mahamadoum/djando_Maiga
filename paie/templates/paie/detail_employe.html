@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ employe.prenom }} {{ employe.nom }}</h1>
+
+    {% if employe.photo %}
+        <p>
+            <img class="img-article-left" src="{{ employe.photo.url }}" alt="Фото {{ employe.prenom }} {{ employe.nom }}">
+        </p>
+    {% endif %}
+
+    <div class="employe-info">
+        <p><strong>Должность:</strong> {{ employe.poste.nom }}</p>
+        <p><strong>Зарплата:</strong> {{ employe.salaire }} €</p>
+        <p><strong>Email:</strong> {{ employe.email }}</p>
+        <p><strong>Дата приёма:</strong> {{ employe.date_embauche|date:"d-m-Y" }}</p>
+
+        <div class="tags">
+            <strong>Навыки:</strong>
+            {% for tag in employe.tags.all %}
+                <a href="{{ tag.get_absolute_url }}">{{ tag.nom }}</a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                Нет навыков
+            {% endfor %}
+        </div>
+    </div>
+
+    <p><a href="{% url 'liste_employes' %}">← Назад к списку</a></p>
+{% endblock %}

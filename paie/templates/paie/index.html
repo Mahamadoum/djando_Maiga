@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    
+    <!-- Ссылка на список должностей -->
+    <p>
+        <a href="{% url 'liste_postes' %}" class="btn btn-info">📋 Управление должностями</a>
+    </p>
+
+    {% if employes %}
+        <ul>
+            {% for e in employes %}
+                <li>
+                    <div class="employe-panel">
+                        <p class="first">Должность: {{ e.poste.nom }}</p>
+                        <p class="last">Дата приёма: {{ e.date_embauche|date:"d-m-Y" }}</p>
+                    </div>
+
+                    {% if e.photo %}
+                        <img class="thumb" src="{{ e.photo.url }}" alt="{{ e.nom }}" width="50" height="50">
+                    {% endif %}
+
+                    <h2>{{ e.prenom }} {{ e.nom }}</h2>
+                    <p>Зарплата: {{ e.salaire }} €</p>
+                    <p>Email: {{ e.email }}</p>
+
+                    <!-- Теги сотрудника -->
+                    <div class="tags">
+                        <strong>Навыки:</strong>
+                        {% for tag in e.tags.all %}
+                            <a href="{{ tag.get_absolute_url }}" class="tag">{{ tag.nom }}</a>{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            Нет навыков
+                        {% endfor %}
+                    </div>
+
+                    <p><a href="{{ e.get_absolute_url }}">Смотреть карточку</a></p>
+                    {% if not forloop.last %}<hr>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет сотрудников.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="assistant-container">
+    <h1>🤖 Assistant RH - Intelligence Artificielle</h1>
+    <p>Posez vos questions sur la gestion des salaires, générez des descriptions de poste, ou analysez des CV.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Formulaire de chat -->
+    <div class="card">
+        <h3>💬 Chat RH</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="chat">
+            <div class="form-group">
+                <textarea name="question" class="form-control" rows="3" placeholder="Posez votre question... (ex: Comment calculer le salaire net à partir du brut ?)"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+    </div>
+
+    <!-- Formulaire de génération de description de poste -->
+    <div class="card">
+        <h3>📝 Générer une description de poste</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="description_poste">
+            <div class="form-group">
+                <label>Titre du poste :</label>
+                <input type="text" name="titre" class="form-control" placeholder="Ex: Développeur Django">
+            </div>
+            <div class="form-group">
+                <label>Compétences requises :</label>
+                <input type="text" name="competences" class="form-control" placeholder="Ex: Python, Django, PostgreSQL">
+            </div>
+            <div class="form-group">
+                <label>Expérience (années) :</label>
+                <input type="number" name="experience" class="form-control" value="3">
+            </div>
+            <button type="submit" class="btn btn-success">Générer</button>
+        </form>
+    </div>
+
+    <!-- Affichage de la réponse -->
+    {% if reponse %}
+    <div class="card response-card">
+        <h3>📌 Réponse de l'assistant :</h3>
+        <div class="reponse-content">
+            {{ reponse|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .assistant-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .response-card {
+        background: #e8f4f8;
+        border-left: 4px solid #3498db;
+    }
+    .reponse-content {
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% load static %}
+{% load paie_tags %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление зарплатами - {{ title }}</title>
+    <link rel="stylesheet" href="{% static 'paie/css/styles.css' %}">
+</head>
+<body>
+    <!-- Заголовок -->
+    <div class="header">
+        <h1>Управление зарплатами</h1>
+    </div>
+
+    <!-- Главное меню с авторизацией -->
+    <div class="mainmenu">
+        <ul id="mainmenu">
+        <!-- ... liens existants ... -->
+        <li><a href="{% url 'assistant_rh' %}">🤖</a></li>
+        <!-- ... -->
+    </ul>
+        <ul id="mainmenu">
+            <li class="logo"><a href="{% url 'home' %}">Главная</a></li>
+            {% for m in mainmenu %}
+                <li><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+                <li class="last"><a href="{% url 'users:profile' %}">{{ user.username }}</a> | <a href="{% url 'users:logout' %}">Выйти</a></li>
+            {% else %}
+                <li class="last"><a href="{% url 'users:login' %}">Войти</a> | <a href="{% url 'users:register' %}">Регистрация</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="sidebar">
+        <!-- Раздел Должности -->
+        <h3>Должности</h3>
+        <ul>
+            {% if poste_selected == 0 or poste_selected is None %}
+                <li class="selected">Все должности</li>
+            {% else %}
+                <li><a href="{% url 'home' %}">Все должности</a></li>
+            {% endif %}
+            {% show_postes poste_selected %}
+        </ul>
+
+        <!-- Раздел Навыки -->
+        <h3>Навыки</h3>
+        <ul>
+            {% if tag_selected == 0 %}
+                <li class="selected">Все навыки</li>
+            {% else %}
+                <li><a href="{% url 'home' %}">Все навыки</a></li>
+            {% endif %}
+            {% show_tags tag_selected %}
+        </ul>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Подвал -->
+    <div class="footer">
+        <p>&copy; 2026 - Управление зарплатами</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    
+    <!-- Кнопка Добавить -->
+    <p><a href="{% url 'ajouter_poste' %}" class="btn btn-success">➕ Добавить должность</a></p>
+    
+    <!-- Сообщения -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Таблица должностей -->
+    {% if postes %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название должности</th>
+                    <th>Slug (URL)</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in postes %}
+                    <tr>
+                        <td>{{ p.id }}</td>
+                        <td>{{ p.nom }}</td>
+                        <td>{{ p.slug }}</td>
+                        <td>
+                            <a href="{% url 'modifier_poste' p.id %}" class="btn btn-warning">✏️ Редактировать</a>
+                            <a href="{% url 'supprimer_poste' p.id %}" class="btn btn-danger">🗑️ Удалить</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Должности не найдены.</p>
+    {% endif %}
+{% endblock %}

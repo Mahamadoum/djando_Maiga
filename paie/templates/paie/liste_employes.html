@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    
+    <!-- Форма фильтрации -->
+    <form method="get" class="filter-form">
+        <input type="text" name="nom" placeholder="Фильтр по имени" value="{{ nom_filtre }}">
+        <button type="submit">Фильтр</button>
+        <a href="{% url 'liste_employes' %}">Сбросить</a>
+    </form>
+    
+    <!-- Кнопка Добавить -->
+    <p><a href="{% url 'ajouter_employe' %}" class="btn btn-success">➕ Добавить сотрудника</a></p>
+    
+    <!-- Сообщения -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Таблица сотрудников -->
+    {% if employes %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Должность</th>
+                    <th>Зарплата</th>
+                    <th>Активен</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in employes %}
+                    <tr>
+                        <td>{{ e.id }}</td>
+                        <td>{{ e.nom }}</td>
+                        <td>{{ e.prenom }}</td>
+                        <td>{{ e.poste.nom|default:"-" }}</td>
+                        <td>{{ e.salaire }} €</td>
+                        <td>{{ e.actif|yesno:"Да,Нет" }}</td>
+                        <td>
+                            <a href="{% url 'modifier_employe' e.id %}" class="btn btn-warning">✏️ Редактировать</a>
+                            <a href="{% url 'supprimer_employe' e.id %}" class="btn btn-danger">🗑️ Удалить</a>
+                            <a href="{% url 'detail_employe_slug' e.slug %}" class="btn btn-info">👁️ Просмотр</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Сотрудники не найдены.</p>
+    {% endif %}
+{% endblock %}

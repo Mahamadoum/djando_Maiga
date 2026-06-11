@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="cv-container">
+    <h1>📄 Analyse de CV par IA</h1>
+    <p>Uploadez un CV (TXT, PDF) et Gemini analysera les informations clés.</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Fichier CV :</label>
+            <input type="file" name="cv_file" class="form-control" accept=".txt,.pdf,.docx">
+        </div>
+        <button type="submit" class="btn btn-primary">Analyser</button>
+    </form>
+    
+    {% if reponse %}
+    <div class="result-card">
+        <h3>📊 Résultat de l'analyse :</h3>
+        <div class="result-content">
+            {{ reponse|linebreaks }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

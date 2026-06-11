@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <!-- Formulaire d'upload -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Uploader</button>
+    </form>
+
+    <!-- Liste des fichiers uploadés -->
+    <h2>Fichiers uploadés</h2>
+    {% if files %}
+        <ul>
+            {% for f in files %}
+                <li>
+                    {{ f.description }} - {{ f.file.name }}
+                    (<a href="{{ f.file.url }}" target="_blank">Télécharger</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun fichier uploadé.</p>
+    {% endif %}
+{% endblock %}
