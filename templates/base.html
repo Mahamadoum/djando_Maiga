@@ -17,9 +17,7 @@
     <!-- Главное меню с авторизацией -->
     <div class="mainmenu">
         <ul id="mainmenu">
-        <!-- ... liens existants ... -->
-        <li><a href="{% url 'assistant_rh' %}">🤖</a></li>
-        <!-- ... -->
+
     </ul>
         <ul id="mainmenu">
             <li class="logo"><a href="{% url 'home' %}">Главная</a></li>
@@ -65,10 +63,12 @@
         {% block content %}
         {% endblock %}
     </div>
+    <li><a href="{% url 'carte' %}">🗺️ Карта и файлы</a></li>
 
     <!-- Подвал -->
     <div class="footer">
         <p>&copy; 2026 - Управление зарплатами</p>
     </div>
+
 </body>
 </html>

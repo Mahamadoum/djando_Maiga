@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="map-page-container">
+    <h1>{{ title }}</h1>
+
+    <!-- Секция карты Яндекс -->
+    <div class="map-section">
+        <h2>📍 Наше местоположение</h2>
+        <div id="map" style="width: 100%; height: 450px; border-radius: 10px; margin-bottom: 20px;"></div>
+        
+        <div class="address-card">
+            <h3>🏢 Адрес :</h3>
+            <p><strong>Карл Маркса 68</strong></p>
+            <p>📞 Телефон : <strong>8 995 000 0000</strong></p>
+            <p>📧 Email : contact@gestion-paie.com</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Форма загрузки файлов -->
+    <div class="upload-section">
+        <h2>📁 Загрузка файлов</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+        </form>
+    </div>
+
+    <!-- Список загруженных файлов -->
+    <div class="files-section">
+        <h2>📄 Загруженные файлы</h2>
+        {% if files %}
+            <ul class="file-list">
+                {% for f in files %}
+                    <li>
+                        📎 {{ f.description }} - {{ f.file.name }}
+                        (<a href="{{ f.file.url }}" target="_blank">Скачать</a>)
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Нет загруженных файлов.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .map-page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .map-section {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .address-card {
+        background: #e8f4f8;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+    
+    .address-card h3 {
+        margin-top: 0;
+        color: #2c3e50;
+    }
+    
+    .upload-section, .files-section {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .file-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .file-list li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .file-list li:last-child {
+        border-bottom: none;
+    }
+    
+    hr {
+        margin: 30px 0;
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, #ccc, transparent);
+    }
+    
+    .btn-primary {
+        background: #2c3e50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        background: #1a252f;
+    }
+</style>
+
+<!-- Yandex Maps API -->
+<script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_КЛЮЧ_API&lang=ru_RU" type="text/javascript"></script>
+
+<script type="text/javascript">
+    ymaps.ready(init);
+    
+    function init() {
+        // Координаты для адреса Карл Маркс 68
+        // (Если есть точные координаты, замените их)
+        var companyCoords = [55.794710, 49.138044];  // Москва (пример)
+        
+        var myMap = new ymaps.Map("map", {
+            center: companyCoords,
+            zoom: 16,
+            controls: ['zoomControl', 'fullscreenControl', 'geolocationControl']
+        });
+        
+        // Основная метка
+        var mainPlacemark = new ymaps.Placemark(companyCoords, {
+            hintContent: 'Управление зарплатами',
+            balloonContent: '<strong>Управление зарплатами</strong><br>Карл Маркса 68<br>Тел: 8 995 000 0000'
+        }, {
+            preset: 'islands#redIcon'
+        });
+        
+        myMap.geoObjects.add(mainPlacemark);
+        
+        // Геолокация пользователя (опционально)
+        if (ymaps.geolocation) {
+            ymaps.geolocation.get({
+                provider: 'yandex',
+                mapStateAutoApply: false
+            }).then(function (result) {
+                var userCoords = result.geoObjects.position;
+                var userPlacemark = new ymaps.Placemark(userCoords, {
+                    hintContent: 'Вы здесь',
+                    balloonContent: 'Ваше текущее положение'
+                }, {
+                    preset: 'islands#blueIcon'
+                });
+                myMap.geoObjects.add(userPlacemark);
+                
+                // Настроить карту, чтобы показать обе точки
+                var bounds = myMap.geoObjects.getBounds();
+                if (bounds) {
+                    myMap.setBounds(bounds, {
+                        checkZoomRange: true,
+                        zoomMargin: 50
+                    });
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

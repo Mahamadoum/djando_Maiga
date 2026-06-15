@@ -21,3 +21,6 @@ staticfiles/
 # Fichiers système
 .DS_Store
 Thumbs.db
+# Secrets
+.env
+config_paie/settings_local.py

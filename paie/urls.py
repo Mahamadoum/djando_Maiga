@@ -30,6 +30,8 @@ urlpatterns = [
     # Tags
     path('assistant-rh/', views.assistant_rh, name='assistant_rh'),
     path('tag/<slug:tag_slug>/', views.show_tag_employes, name='tag_detail'),
+
+    path('carte/', views.carte, name='carte'),
     ]
 
 if settings.DEBUG:

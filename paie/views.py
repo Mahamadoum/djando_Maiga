@@ -11,9 +11,11 @@ from paie.forms import AddEmployeForm, UploadFileModelForm
 from paie.models import Employe, Poste, Tag, UploadedFile
 
 menu = [
-    {'title': "Accueil", 'url_name': 'home'},
-    {'title': "Employés", 'url_name': 'liste_employes'},
-    {'title': "Contact", 'url_name': 'contact'},
+    {'title': "🤖", 'url_name': 'assistant_rh'},
+    {'title': "сотрудники", 'url_name': 'liste_employes'},
+    {'title': "Contact", 'url_name': 'about'},
+    {'title': "карта", 'url_name': 'carte'},
+
 ]
 postes_db = [
     {'id': 1, 'name': 'Бухгалтерия'},
@@ -418,39 +420,36 @@ def supprimer_poste(request, pk):
 
 
 from django.shortcuts import render
-from django.contrib import messages
-from .gemini_utils import get_gemini_response, generer_description_poste, chat_rh, analyser_cv
+# Choisis ton service
+from .deepseek_utils import chat_rh, generer_description_poste
 
+
+# from .openai_utils import chat_rh_openai as chat_rh
+# from .mistral_utils import chat_rh_mistral as chat_rh
 
 def assistant_rh(request):
-    """
-    Assistant RH avec Gemini
-    """
     reponse = None
 
     if request.method == 'POST':
-        question = request.POST.get('question', '')
-        action = request.POST.get('action', 'chat')
+        action = request.POST.get('action')
 
         if action == 'chat':
-            reponse = chat_rh(question)
+            question = request.POST.get('question', '')
+            reponse = chat_rh(question)  # Utilise le service choisi
+            messages.success(request, "Réponse générée avec succès !")
+
         elif action == 'description_poste':
             titre = request.POST.get('titre', '')
             competences = request.POST.get('competences', '')
             experience = request.POST.get('experience', 3)
             reponse = generer_description_poste(titre, competences, experience)
-        else:
-            reponse = get_gemini_response(question)
+            messages.success(request, "Description générée avec succès !")
 
-        messages.success(request, "Réponse générée avec succès !")
-
-    data = {
-        'title': 'Assistant RH - IA Gemini',
+    return render(request, 'paie/assistant_rh.html', {
+        'title': 'Assistant RH',
         'menu': menu,
         'reponse': reponse,
-    }
-    return render(request, 'paie/assistant_rh.html', data)
-
+    })
 
 def analyser_cv_upload(request):
     """
@@ -470,3 +469,23 @@ def analyser_cv_upload(request):
         'reponse': reponse,
     }
     return render(request, 'paie/analyser_cv.html', data)
+
+
+def carte(request):
+    files = UploadedFile.objects.all()
+    form = UploadFileModelForm()
+
+    if request.method == 'POST':
+        form = UploadFileModelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Файл успешно загружен!")
+            return redirect('carte')
+
+    context = {
+        'title': 'Карта и файлы',
+        'menu': menu,
+        'form': form,
+        'files': files,
+    }
+    return render(request, 'paie/carte.html', context)

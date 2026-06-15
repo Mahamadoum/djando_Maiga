@@ -6,8 +6,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 # Configuration API Gemini
-GEMINI_API_KEY = ''
+from dotenv import load_dotenv
 
+
+load_dotenv()
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
